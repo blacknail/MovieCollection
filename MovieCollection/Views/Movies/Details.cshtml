@@ -1,0 +1,60 @@
+﻿@model MovieCollection.Models.Movie
+
+<h4>Movie</h4>
+<hr />
+<div style="position: relative;">
+    <div class="item">
+        <div class="item_left">
+            <div class="poster">
+                <img src="@Url.Content("~/Content/images/"+ (String.IsNullOrEmpty(Model.Poster)? "blank.png":Model.Poster))" >
+            </div>
+        </div>
+
+        <div class="item_right">
+            <dl class="dl-horizontal details">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Title):
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Description):
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Description)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ReleaseDate):
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.ReleaseDate)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Director):
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Director)
+                </dd>
+            </dl>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<div style="position: relative;">
+    <p>
+        @if (Model.User != null && ViewBag.CurrentUser == Model.User.Id)
+        {
+            @Html.ActionLink("Edit", "Edit", new { id = Model.MovieID })            
+            @:|
+        }
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</div>

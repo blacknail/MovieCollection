@@ -1,0 +1,88 @@
+﻿@model PagedList.IPagedList<MovieCollection.Models.Movie>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Movies";
+}
+
+<h2>Movies</h2>
+
+<p>
+@if (User.Identity.IsAuthenticated)
+{
+    @Html.ActionLink("Create New", "Create")
+}
+else {
+    <br/>
+}
+</p>
+@using (Html.BeginForm("Index", "Movies", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+<table class="table">
+            <tr>
+                <th class="col-lg-1">
+                    @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParm, currentFilter = ViewBag.CurrentFilter })
+                </th>
+                <th class="col-lg-4">
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Description)
+                </th>
+                <th class="col-lg-1">
+                    @Html.ActionLink("Release Date", "Index", new { sortOrder = ViewBag.ReleaseDateSortParm, currentFilter = ViewBag.CurrentFilter })
+                </th>
+                <th class="col-lg-1">
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Director)
+                </th>
+                <th class="col-lg-1">
+                    @Html.DisplayNameFor(model => model.FirstOrDefault().Poster)
+                </th>
+                <th class="col-lg-2"></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @(item.Description.Length > 100 ? item.Description.Substring(0, 100) + "..." : item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReleaseDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Director)
+                    </td>
+                    <td>
+                        <img src="@Url.Content("~/Content/images/"+ (String.IsNullOrEmpty(item.Poster)? "blank.png":item.Poster))" height="50" width="50" alt="img poster">
+                    </td>
+                    <td>
+                        @if (item.User != null && ViewBag.CurrentUser == item.User.Id )
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.MovieID })
+                            @:|
+                        }                      
+                        @Html.ActionLink("Details", "Details", new { id = item.MovieID }) 
+                        
+                        @if (item.User != null && ViewBag.CurrentUser == item.User.Id)
+                        {
+                            @:|
+                            @Html.ActionLink("Delete", "Delete", new { id = item.MovieID })
+                        }
+                        
+                    </td>
+                </tr>
+            }
+
+        </table>
+    <br />
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+        new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
